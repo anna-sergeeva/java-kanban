@@ -1,0 +1,15 @@
+package tasktracker;
+
+public class Subtask extends Task {
+    protected Epic epic;
+
+    public Subtask(String name, String description, long id, Epic epic) {
+        super(name, description, id);
+        this.epic = epic;
+    }
+
+    public String toString() {
+        String var10000 = this.name;
+        return "Подзадача\nНазвание'" + var10000 + "',\nОписание'" + this.description + "',\nСтатус'" + String.valueOf(this.getStatus()) + "',\nid '" + this.id + "'";
+    }
+}
