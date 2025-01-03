@@ -1,0 +1,46 @@
+package tasktracker;
+
+public class Task {
+    protected String name;
+    protected String description;
+    private StatusOfTasks status;
+    protected long id;
+
+    public Task(String name, String description, long id) {
+        this.name = name;
+        this.description = description;
+        this.id = id;
+        this.status = StatusOfTasks.NEW;
+    }
+
+    public String toString() {
+        String var10000 = this.name;
+        return "Задача\nНазвание'" + var10000 + "',\nОписание'" + this.description + "',\nСтатус'" + String.valueOf(this.getStatus()) + "',\nid '" + this.id + "'";
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public StatusOfTasks getStatus() {
+        return this.status;
+    }
+
+    public void setStatus(String status) {
+        switch (status) {
+            case "NEW" -> this.status = StatusOfTasks.NEW;
+            case "IN_PROGRESS" -> this.status = StatusOfTasks.IN_PROGRESS;
+            case "DONE" -> this.status = StatusOfTasks.DONE;
+            default -> System.out.println("Такого статуса нет");
+        }
+
+    }
+}
