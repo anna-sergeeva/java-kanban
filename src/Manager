@@ -1,0 +1,194 @@
+package main;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import tasktracker.Epic;
+import tasktracker.Subtask;
+import tasktracker.Task;
+
+public class Manager {
+    private HashMap<Long, Task> tasks = new HashMap();
+    private HashMap<Long, Subtask> subtasks = new HashMap();
+    private HashMap<Long, Epic> epics = new HashMap();
+    private HashMap<Long, ArrayList<Subtask>> epicVsSubtask = new HashMap();
+    private HashMap<Long, Long> subtaskVsEpic = new HashMap();
+
+    public Manager() {
+    }
+
+    public HashMap<Long, Task> getTasks() {
+        return this.tasks;
+    }
+
+    public HashMap<Long, Subtask> getSubtasks() {
+        return this.subtasks;
+    }
+
+    public HashMap<Long, Epic> getEpics() {
+        return this.epics;
+    }
+
+    public HashMap<Long, ArrayList<Subtask>> getEpicVsSubtask() {
+        return this.epicVsSubtask;
+    }
+
+    public HashMap<Long, Long> getSubtaskVsEpic() {
+        return this.subtaskVsEpic;
+    }
+
+    public Epic createNewEpic(String inputName, String inputDescription, long id) {
+        long id1 = id;
+        if (this.tasks.containsKey(id1) || this.subtasks.containsKey(id1) || this.epics.containsKey(id1)) {
+            System.out.println("Этот идентификатор уже используется");
+            System.out.println("Идентификатор будет изменён автоматически");
+
+            while(this.tasks.containsKey(id1) || this.subtasks.containsKey(id1) || this.epics.containsKey(id1)) {
+                id1 *= 13L;
+            }
+        }
+
+        Epic epic = new Epic(inputName, inputDescription, id1);
+        this.epics.put(id1, epic);
+        System.out.println("Задача добавлена");
+        return epic;
+    }
+
+    public Subtask createNewSubtask(String inputName, String inputDescription, long id, Epic epic) {
+        long id1 = id;
+        Subtask subtask;
+        ArrayList subtaskList;
+        if (!this.tasks.containsKey(id1) && !this.subtasks.containsKey(id1) && !this.epics.containsKey(id1)) {
+            subtask = new Subtask(inputName, inputDescription, id1, epic);
+            this.subtasks.put(id1, subtask);
+            subtaskList = epic.getSubtaskList();
+            subtaskList.add(subtask);
+            epic.setSubtaskList(subtaskList);
+            this.epicVsSubtask.put(epic.getId(), subtaskList);
+            this.subtaskVsEpic.put(id1, epic.getId());
+            System.out.println("Задача добавлена");
+            return subtask;
+        } else {
+            System.out.println("Этот идентификатор уже используется");
+            System.out.println("Идентификатор будет изменён автоматически");
+
+            while(this.tasks.containsKey(id1) || this.subtasks.containsKey(id1) || this.epics.containsKey(id1)) {
+                id1 *= 13L;
+            }
+
+            subtask = new Subtask(inputName, inputDescription, id1, epic);
+            this.subtasks.put(id1, subtask);
+            subtaskList = epic.getSubtaskList();
+            subtaskList.add(subtask);
+            epic.setSubtaskList(subtaskList);
+            this.epicVsSubtask.put(epic.getId(), subtaskList);
+            this.subtaskVsEpic.put(id1, epic.getId());
+            System.out.println("Задача добавлена");
+            return subtask;
+        }
+    }
+
+    public Task createNewTask(String inputName, String inputDescription, long id) {
+        long id1 = id;
+        if (this.tasks.containsKey(id1) || this.subtasks.containsKey(id1) || this.epics.containsKey(id1)) {
+            System.out.println("Этот идентификатор уже используется");
+            System.out.println("Идентификатор будет изменён автоматически");
+
+            while(this.tasks.containsKey(id1) || this.subtasks.containsKey(id1) || this.epics.containsKey(id1)) {
+                id1 *= 13L;
+            }
+        }
+
+        Task task = new Task(inputName, inputDescription, id1);
+        this.tasks.put(id1, task);
+        System.out.println("Задача добавлена");
+        return task;
+    }
+
+    public Task getTask(long inputId) {
+        return (Task)this.tasks.get(inputId);
+    }
+
+    public Subtask getSubtask(long inputId) {
+        return (Subtask)this.subtasks.get(inputId);
+    }
+
+    public Epic getEpic(long inputId) {
+        return (Epic)this.epics.get(inputId);
+    }
+
+    public void updateTask(long inputId, Task task) {
+        this.tasks.put(inputId, task);
+    }
+
+    public void updateSubtask(long inputId, Subtask subtask) {
+        ArrayList<Subtask> subtasks1 = (ArrayList)this.epicVsSubtask.get(this.subtaskVsEpic.get(inputId));
+        subtasks1.remove(this.subtasks.get(inputId));
+        subtasks1.add(subtask);
+        this.epicVsSubtask.put((Long)this.subtaskVsEpic.get(inputId), subtasks1);
+        Long idEpic = (Long)this.subtaskVsEpic.get(inputId);
+        Epic epic = (Epic)this.epics.get(idEpic);
+        ArrayList<Subtask> subtasks2 = epic.getSubtaskList();
+        subtasks2.remove(this.subtasks.get(inputId));
+        subtasks2.add(subtask);
+        epic.setSubtaskList(subtasks2);
+    }
+
+    public void updateEpic(long inputId, Epic epic) {
+        this.epics.put(inputId, epic);
+    }
+
+    public void removeTask(long inputId) {
+        if (this.tasks.containsKey(inputId)) {
+            this.tasks.remove(inputId);
+            System.out.println("Задача удалена");
+        } else {
+            System.out.println("Задача с таким идентификатором не найдена");
+        }
+
+    }
+
+    public void removeEpic(long inputId) {
+        if (this.epics.containsKey(inputId)) {
+            ArrayList<Subtask> subtasks1 = (ArrayList)this.epicVsSubtask.get(inputId);
+            subtasks1.clear();
+            Epic epic = (Epic)this.epics.get(inputId);
+            ArrayList<Subtask> subtasks2 = epic.getSubtaskList();
+            subtasks2.clear();
+            epic.setSubtaskList(subtasks2);
+            this.epics.remove(inputId);
+            System.out.println("Задача удалена");
+        } else {
+            System.out.println("Эпик с таким идентификатором не найден");
+        }
+
+    }
+
+    public void removeSubtask(long inputId) {
+        if (this.subtasks.containsKey(inputId)) {
+            Long epicId = (Long)this.subtaskVsEpic.get(inputId);
+            ArrayList<Subtask> subtasks1 = (ArrayList)this.epicVsSubtask.get(epicId);
+            subtasks1.remove(this.subtasks.get(inputId));
+            this.subtasks.remove(inputId);
+            Epic epic = (Epic)this.epics.get(epicId);
+            ArrayList<Subtask> subtasks2 = epic.getSubtaskList();
+            subtasks2.remove(this.subtasks.get(inputId));
+            epic.setSubtaskList(subtasks2);
+            if (subtasks1.isEmpty()) {
+                this.epics.remove(this.subtaskVsEpic.get(inputId));
+            }
+
+            System.out.println("Задача удалена");
+        } else {
+            System.out.println("Подзадача с таким идентификатором не найдена");
+        }
+
+    }
+
+    public void removeAllTasks(HashMap<Long, Task> tasks, HashMap<Long, Subtask> subtasks, HashMap<Long, Epic> epics, HashMap<Long, ArrayList<Subtask>> epicVsSubtask, HashMap<Long, Long> subtaskVsEpic) {
+        tasks.clear();
+        subtasks.clear();
+        epics.clear();
+        epicVsSubtask.clear();
+        subtaskVsEpic.clear();
+    }
+}
