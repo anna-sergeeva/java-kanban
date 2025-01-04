@@ -1,0 +1,31 @@
+package model;
+
+import java.util.ArrayList;
+
+public class Epic extends Task {
+    private ArrayList<Integer> subtaskId;
+
+    public Epic(String name, String description, Integer id, StatusOfTask status, ArrayList<Integer> subtaskId) {
+        super(name, description, id, status);
+        this.subtaskId = subtaskId;
+    }
+
+    @Override
+    public String toString() {
+        return "model.Epic{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", id=" + id +
+                ", status='" + status + '\'' +
+                ", subtaskId=" + subtaskId +
+                '}';
+    }
+
+    public ArrayList<Integer> getSubtaskId() {
+        return subtaskId;
+    }
+
+    public void setSubtaskId(ArrayList<Integer> subtaskId) {
+        this.subtaskId = subtaskId;
+    }
+}
