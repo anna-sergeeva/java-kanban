@@ -16,7 +16,7 @@ public class Manager {
     HashMap<Integer, Epic> epics = new HashMap<>();
     HashMap<Integer, Subtask> subtasks = new HashMap<>();
 
-    private int counterId() {
+    private int idCounter() {
         id++;
         return id;
     }
@@ -49,27 +49,27 @@ public class Manager {
         }
     }
 
-    public Integer addTask(Task task) {
-        final int id = counterId();
+    public Integer createTask(Task task) {
+        final int id = idCounter();
         task.setId(id);
         tasks.put(id, task);
         return id;
     }
 
-    public Integer addEpic(Epic epic) {
-        final int id = counterId();
+    public Integer createEpic(Epic epic) {
+        final int id = idCounter();
         epic.setId(id);
         updateEpicStatus(epic);
         epics.put(id, epic);
         return id;
     }
 
-    public Integer addSubtask(Subtask subtask) {
+    public Integer createSubtask(Subtask subtask) {
         Epic epic = epics.get(subtask.getEpicId());
         if (epic == null) {
             return null;
         }
-        final int id = counterId();
+        final int id = idCounter();
         subtask.setId(id);
         subtasks.put(id, subtask);
         epic.getSubtaskId().add(id);

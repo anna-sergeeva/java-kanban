@@ -12,27 +12,27 @@ public class Main {
         Manager manager = new Manager();
 
         // Создаём 2 задачи
-        Task task1 = new Task("T1", "", 0, StatusOfTask.NEW);
-        Task task2 = new Task("T2", "", 0, StatusOfTask.NEW);
+        Task task1 = new Task("Купить продукты", "Купить продукты для НГ вечеринки", 0, StatusOfTask.NEW);
+        Task task2 = new Task("Постирать вещи", "Постирать вещи ребёнка", 0, StatusOfTask.NEW);
 
-        int task1Id = manager.addTask(task1);
-        int task2Id = manager.addTask(task2);
+        int taskId1 = manager.createTask(task1);
+        int taskId2 = manager.createTask(task2);
 
         // Создаём эпик с 2 подзадачами
-        Epic epic1 = new Epic("E1", "", 0, StatusOfTask.NEW, new ArrayList<Integer>());
-        int epic1Id = manager.addEpic(epic1);
+        Epic epic1 = new Epic("Собраться на корпоратив", "Выполнить задачи для похода на корпоратив", 0, StatusOfTask.NEW, new ArrayList<Integer>());
+        int epicId1 = manager.createEpic(epic1);
 
-        Subtask epic1subtask1 = new Subtask("E1S1", "", 0, StatusOfTask.NEW, epic1Id);
-        Subtask epic1subtask2 = new Subtask("E1S2", "", 0, StatusOfTask.NEW, epic1Id);
-        int epic1subtask1Id = manager.addSubtask(epic1subtask1);
-        int epic1subtask2Id = manager.addSubtask(epic1subtask2);
+        Subtask subtask1 = new Subtask("Купить платье", "Купить вечернее платье, не дороже 10000", 0, StatusOfTask.NEW, epicId1);
+        Subtask subtask2 = new Subtask("Сделать прическу", "Записаться в салон на укладку", 0, StatusOfTask.NEW, epicId1);
+        int subtaskId1 = manager.createSubtask(subtask1);
+        int subtaskId2 = manager.createSubtask(subtask2);
 
         // Создаём эпик с 1 подзадачей
-        Epic epic2 = new Epic("E2", "", 0, StatusOfTask.NEW, new ArrayList<Integer>());
-        int epic2Id = manager.addEpic(epic2);
+        Epic epic2 = new Epic("Получить визу в Испанию", "Выполнить все пункты для визы в Испанию", 0, StatusOfTask.NEW, new ArrayList<Integer>());
+        int epicId2 = manager.createEpic(epic2);
 
-        Subtask epic2subtask1 = new Subtask("E2S1", "", 0, StatusOfTask.NEW, epic2Id);
-        int epic2subtask1Id = manager.addSubtask(epic2subtask1);
+        Subtask subtask3 = new Subtask("Собрать документы для визы", "", 0, StatusOfTask.NEW, epicId2);
+        int subtaskId3 = manager.createSubtask(subtask3);
 
         // Распечатываем списки эпиков, задач и подзадач
         System.out.println(manager.getTasks());
@@ -40,28 +40,28 @@ public class Main {
         System.out.println(manager.getSubtasks());
 
         // Изменяем статусы созданных объектов и распечатаем
-        Task task1upd1 = new Task("T1", "", task1Id, StatusOfTask.DONE);
-        Task task2upd1 = new Task("T2", "", task2Id, StatusOfTask.DONE);
-        Subtask epic1subtask1upd1 = new Subtask("E1S1", "", epic1subtask1Id, StatusOfTask.DONE, epic1Id);
-        Subtask epic1subtask2upd1 = new Subtask("E1S2", "", epic1subtask2Id, StatusOfTask.DONE, epic1Id);
-        Subtask epic2subtask1upd1 = new Subtask("E2S1", "", epic2subtask1Id, StatusOfTask.DONE, epic2Id);
+        Task task1upd = new Task("Купить диван", "", taskId1, StatusOfTask.DONE);
+        Task task2upd = new Task("Помыть полы", "", taskId2, StatusOfTask.DONE);
+        Subtask subtask1upd = new Subtask("Заказать такси", "Заказать такси до места мероприятия", subtaskId1, StatusOfTask.DONE, epicId1);
+        Subtask subtask2upd = new Subtask("Купить подарки", "Купить подарки коллегам", subtaskId2, StatusOfTask.DONE, epicId1);
+        Subtask subtask3upd = new Subtask("Купить билеты", "Купить билеты на самолет и на поезд", subtaskId3, StatusOfTask.DONE, epicId2);
 
-        manager.updateTask(task1upd1);
-        manager.updateTask(task2upd1);
-        manager.updateSubtask(epic1subtask1upd1);
-        manager.updateSubtask(epic1subtask2upd1);
-        manager.updateSubtask(epic2subtask1upd1);
+        manager.updateTask(task1upd);
+        manager.updateTask(task2upd);
+        manager.updateSubtask(subtask1upd);
+        manager.updateSubtask(subtask2upd);
+        manager.updateSubtask(subtask3upd);
 
-        System.out.println("\nПосле изменения статусов задач");
+        System.out.println("\nСписок после изменения статусов задач");
         System.out.println(manager.getTasks());
         System.out.println(manager.getEpics());
         System.out.println(manager.getSubtasks());
 
         // Удаляем 1 задачу и 1 эпик и распечатываем состояние сущностей после удаления
-        manager.delTaskById(task1Id);
-        manager.delEpicById(epic1Id);
+        manager.delTaskById(taskId1);
+        manager.delEpicById(epicId1);
 
-        System.out.println("\nПосле удаления задач");
+        System.out.println("\nСписок после удаления задач");
         System.out.println(manager.getTasks());
         System.out.println(manager.getEpics());
         System.out.println(manager.getSubtasks());
