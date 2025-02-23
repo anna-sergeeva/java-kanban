@@ -8,7 +8,6 @@ public class Subtask extends Task {
         this.epicId = epicId;
     }
 
-
     public Integer getEpicId() {
         return epicId;
     }
@@ -16,7 +15,6 @@ public class Subtask extends Task {
     public void setEpicId(Integer epicId) {
         this.epicId = epicId;
     }
-
 
     @Override
     public String toString() {
@@ -28,4 +26,5 @@ public class Subtask extends Task {
                 ", epicId=" + epicId +
                 '}';
     }
+
 }

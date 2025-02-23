@@ -142,7 +142,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void removeSubtaskByIdTest() {
         taskManager.removeSubtaskById(4);
-        assertNull(taskManager.getSubtaskById(4), "Задача не удалилась");
+        assertNull(taskManager.getSubtaskById(4), "Задача не удалена");
         List<Subtask> subtasks = taskManager.getSubtasks();
         assertNotNull(subtasks, "Удалились все задачи.");
         assertEquals(1, subtasks.size(), "Неверное количество оставшихся задач.");

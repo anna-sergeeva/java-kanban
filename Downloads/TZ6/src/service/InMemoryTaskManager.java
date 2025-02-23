@@ -30,14 +30,6 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Integer addEpic(Epic epic) {
-        final int id = idCounter();
-        epic.setId(id);
-        epics.put(id, epic);
-        return id;
-    }
-
-    @Override
     public Integer addSubtask(Subtask subtask) {
         Epic epic = epics.get(subtask.getEpicId());
         if (epic == null) {
@@ -48,6 +40,14 @@ public class InMemoryTaskManager implements TaskManager {
         subtasks.put(id, subtask);
         epic.addSubtaskId(id);;
         updateEpicStatus(epic);
+        return id;
+    }
+
+    @Override
+    public Integer addEpic(Epic epic) {
+        final int id = idCounter();
+        epic.setId(id);
+        epics.put(id, epic);
         return id;
     }
 

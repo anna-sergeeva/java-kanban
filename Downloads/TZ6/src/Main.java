@@ -12,13 +12,13 @@ public class Main {
 
         TaskManager taskManager = Managers.getDefault();
 
-        // Создадим 2 задачи
+        // Создали 2 задачи
         Task task1 = new Task("Задача 1", "Описание задачи 1", 1);
         Task task2 = new Task("Задача 2", "Описание задачи 2", 2);
         int task1Id = taskManager.addTask(task1);
         int task2Id = taskManager.addTask(task2);
 
-        // Создадим 1 эпик c 3 подзадачами и эпик без подзадач
+        // Создали 1 эпик c 3 подзадачами и эпик без подзадач
         Epic epic1 = new Epic("Эпик 1", "Описание эпика 1", 3, new ArrayList<Integer>());
         Epic epic2 = new Epic("Эпик 2", "Описание эпика 2", 4, new ArrayList<Integer>());
 
@@ -33,7 +33,7 @@ public class Main {
         int subtask2Id = taskManager.addSubtask(subtask2);
         int subtask3Id = taskManager.addSubtask(subtask3);
 
-        // Просмотрим задачи и выведем историю после каждого запроса
+        // Просмотрели задачи и вывели историю после каждого запроса
         taskManager.getTaskById(task1Id);
         System.out.println(taskManager.getHistory());
         taskManager.getTaskById(task1Id);
@@ -49,11 +49,11 @@ public class Main {
         taskManager.getSubtaskById(subtask3Id);
         System.out.println(taskManager.getHistory());
 
-        //удалим задачу из истории и проверим, ято при печати она не будет выводиться
+        //удалили задачу из истории и проверили, что при печати она не будет выводиться
         taskManager.removeTaskById(task1Id);
         System.out.println(taskManager.getHistory());
 
-        //удалим эпик с 3 подзадачами и убедимся, что в истории нет ни эпика, ни его подзадач
+        //удалили эпик с 3 подзадачами и убедились, что в истории нет ни эпика, ни его подзадач
         taskManager.removeEpicById(epic1Id);
         System.out.println(taskManager.getHistory());
     }

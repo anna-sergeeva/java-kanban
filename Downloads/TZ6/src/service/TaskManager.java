@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface TaskManager {
+
     List<Task> getHistory();
 
     Integer addTask(Task task);

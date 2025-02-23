@@ -66,8 +66,8 @@ public class HistoryManagerTest {
         historyManager.add(task);
         historyManager.add(task);
         history = historyManager.getHistory();
-        assertEquals(1, history.size(), "История сохранена неверно");
-        assertEquals(1, task.getId(), "История сохранена неверно");
+        assertEquals(1, history.size(), "История сохранена некорректно");
+        assertEquals(1, task.getId(), "История сохранена некорректно");
     }
 
     @Test
@@ -77,25 +77,25 @@ public class HistoryManagerTest {
         historyManager.add(subtask1);
         List<Task> history = historyManager.getHistory();
         assertNotNull(history, "Список истории отсутствует");
-        assertEquals(3, history.size(), "История сохранена неверно");
+        assertEquals(3, history.size(), "История сохранена некорректно");
         //удаление из начала истории
         historyManager.remove(1);
         history = historyManager.getHistory();
-        assertEquals(2, history.size(), "История сохранена неверно");
-        assertEquals(2, history.get(0).getId(), "История сохранена неверно");
-        assertEquals(3, history.get(1).getId(), "История сохранена неверно");
+        assertEquals(2, history.size(), "История сохранена некорректно");
+        assertEquals(2, history.get(0).getId(), "История сохранена некорректно");
+        assertEquals(3, history.get(1).getId(), "История сохранена некорректно");
         //удаление из середины истории
         historyManager.add(subtask2);
         historyManager.remove(3);
         history = historyManager.getHistory();
-        assertEquals(2, history.size(), "История сохранена неверно");
-        assertEquals(2, history.get(0).getId(), "История сохранена неверно");
-        assertEquals(4, history.get(1).getId(), "История сохранена неверно");
+        assertEquals(2, history.size(), "История сохранена некорректно");
+        assertEquals(2, history.get(0).getId(), "История сохранена некорректно");
+        assertEquals(4, history.get(1).getId(), "История сохранена некорректно");
         //удаление с конца истории
         historyManager.remove(4);
         history = historyManager.getHistory();
-        assertEquals(1, history.size(), "История сохранена неверно");
-        assertEquals(2, history.get(0).getId(), "История сохранена неверно");
+        assertEquals(1, history.size(), "История сохранена некорректно");
+        assertEquals(2, history.get(0).getId(), "История сохранена некорректно");
     }
 
 }
