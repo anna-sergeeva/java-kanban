@@ -36,17 +36,17 @@ public class InMemoryHistoryManager implements HistoryManager {
         final Node node = nodeMap.remove(id);
         if (node != null) {
             if (node.prev != null) {
-                node.prev.next = node.next; //тут может записаться как null так и ссылка на следующую ноду, таким образом мы избавляемся от необходимости снова возвращаться к этой ссылке
-                if (node.next == null) { //если же дальше больше нет нод, то мы делаем предыдущую ноду последней
+                node.prev.next = node.next;
+                if (node.next == null) {
                     last = node.prev;
-                } else {  // если нода есть, даем ей ссылку на предыдущую ноду
+                } else {
                     node.next.prev = node.prev;
                 }
-            } else { // node == first, остался случай когда мы удаляем первую ноду
-                first = node.next; //присваиваем первой ноде ссылку на следующую ноду, если следующей ноды нет, то присвоится null
-                if (first == null) { //если была удалена единственная нода, обнуляем last
+            } else {
+                first = node.next;
+                if (first == null) {
                     last = null;
-                } else { //если нода не единственная - обнуляем ссылку на предыдущую ноду
+                } else {
                     first.prev = null;
                 }
             }
