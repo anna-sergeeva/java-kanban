@@ -12,13 +12,13 @@ public class Main {
 
         TaskManager taskManager = Managers.getDefault();
 
-        // Создали 2 задачи
+        // Создаем 2 задачи
         Task task1 = new Task("Задача 1", "Описание задачи 1", 1);
         Task task2 = new Task("Задача 2", "Описание задачи 2", 2);
         int task1Id = taskManager.addTask(task1);
         int task2Id = taskManager.addTask(task2);
 
-        // Создали 1 эпик c 3 подзадачами и эпик без подзадач
+        // Создаем 1 эпик c 3 подзадачами и эпик без подзадач
         Epic epic1 = new Epic("Эпик 1", "Описание эпика 1", 3, new ArrayList<Integer>());
         Epic epic2 = new Epic("Эпик 2", "Описание эпика 2", 4, new ArrayList<Integer>());
 
