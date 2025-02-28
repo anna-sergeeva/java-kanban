@@ -1,6 +1,4 @@
 import model.Epic;
-import model.StatusOfTask;
-import model.Subtask;
 import model.Task;
 import service.Managers;
 import service.TaskManager;
