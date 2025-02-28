@@ -1,4 +1,6 @@
 import model.Epic;
+import model.StatusOfTask;
+import model.Subtask;
 import model.Task;
 import service.Managers;
 import service.TaskManager;
@@ -10,33 +12,49 @@ public class Main {
 
         TaskManager taskManager = Managers.getDefault();
 
-        // Создадим 2 задачи
-        int task1Id = taskManager.addTask(new Task("Задача 1", "Описание задачи 1", 1));
-        int task2Id = taskManager.addTask(new Task("Задача 2", "Описание задачи 2", 1));
+        // Создаем 2 задачи
+        Task task1 = new Task("Задача 1", "Описание задачи 1", 1);
+        Task task2 = new Task("Задача 2", "Описание задачи 2", 2);
+        int task1Id = taskManager.addTask(task1);
+        int task2Id = taskManager.addTask(task2);
 
-        // Создадим 1 эпик
-        int epic1Id = taskManager.addEpic(new Epic("Эпик 1", "Описание эпика 1", 1, new ArrayList<Integer>()));
+        // Создаем 1 эпик c 3 подзадачами и эпик без подзадач
+        Epic epic1 = new Epic("Эпик 1", "Описание эпика 1", 3, new ArrayList<Integer>());
+        Epic epic2 = new Epic("Эпик 2", "Описание эпика 2", 4, new ArrayList<Integer>());
 
-        // Просмотрим задачи
+        int epic1Id = taskManager.addEpic(epic1);
+        int epic2Id = taskManager.addEpic(epic2);
+
+        Subtask subtask1 = new Subtask("Подзадача 1", "Описание подзадачи 1", 5, 3);
+        Subtask subtask2 = new Subtask("Подзадача 2", "Описание подзадачи 2", 6, 3);
+        Subtask subtask3 = new Subtask("Подзадача 3", "Описание подзадачи 3", 7, 3);
+
+        int subtask1Id = taskManager.addSubtask(subtask1);
+        int subtask2Id = taskManager.addSubtask(subtask2);
+        int subtask3Id = taskManager.addSubtask(subtask3);
+
+        // Просмотрели задачи и вывели историю после каждого запроса
         taskManager.getTaskById(task1Id);
+        System.out.println(taskManager.getHistory());
+        taskManager.getTaskById(task1Id);
+        System.out.println(taskManager.getHistory());
+        taskManager.getSubtaskById(subtask2Id);
+        System.out.println(taskManager.getHistory());
+        taskManager.getEpicById(epic2Id);
+        System.out.println(taskManager.getHistory());
         taskManager.getTaskById(task2Id);
+        System.out.println(taskManager.getHistory());
+        taskManager.getSubtaskById(subtask1Id);
+        System.out.println(taskManager.getHistory());
+        taskManager.getSubtaskById(subtask3Id);
+        System.out.println(taskManager.getHistory());
 
+        //удалили задачу из истории и проверили, что при печати она не будет выводиться
+        taskManager.removeTaskById(task1Id);
+        System.out.println(taskManager.getHistory());
 
-        // Просмотрим историю показов задач
-        for (Task task : taskManager.getHistory()) {
-            System.out.println(task);
-        }
-
-        // Просмотрим эпик 5 раз
-        int i = 0;
-        while (i < 5) {
-            taskManager.getEpicById(epic1Id);
-            i++;
-        }
-
-        // Просмотрим историю показов задач
-        for (Task task : taskManager.getHistory()) {
-            System.out.println(task);
-        }
+        //удалили эпик с 3 подзадачами и убедились, что в истории нет ни эпика, ни его подзадач
+        taskManager.removeEpicById(epic1Id);
+        System.out.println(taskManager.getHistory());
     }
 }
