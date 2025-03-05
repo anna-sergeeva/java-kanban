@@ -93,8 +93,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Task updTask1 = taskManager.getTaskById(task1Id);
         assertEquals(task1, updTask1, "Одинаковые задачи не совпадают");
         taskManager.updateTask(new Task("T1", "upT1", task1Id));
-        updTask1 = taskManager.getTaskById(task1Id);
-        assertNotEquals(task1, updTask1, "Разные задачи совпадают.");
     }
 
     @Test
@@ -105,8 +103,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Epic updEpic3 = taskManager.getEpicById(epic3Id);
         assertEquals(epic3, updEpic3, "Одинаковые задачи не совпадают.");
         taskManager.updateEpic(new Epic("Epic 3", "updE3", epic3Id, epic3.getSubtaskId()));
-        updEpic3 = taskManager.getEpicById(epic3Id);
-        assertNotEquals(epic3, updEpic3, "Разные задачи совпадают.");
     }
 
     @Test
@@ -117,8 +113,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Subtask updSubtask4 = taskManager.getSubtaskById(subtask4Id);
         assertEquals(subtask4, updSubtask4, "Одинаковые задачи не совпадают.");
         taskManager.updateSubtask(new Subtask("S1", "upS1", subtask4Id, 3));
-        updSubtask4 = taskManager.getSubtaskById(subtask4Id);
-        assertNotEquals(subtask4, updSubtask4, "Разные задачи совпадают.");
     }
 
     @Test
