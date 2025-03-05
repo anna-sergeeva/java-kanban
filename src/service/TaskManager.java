@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface TaskManager {
+
     List<Task> getHistory();
 
     Integer addTask(Task task);
@@ -36,16 +37,15 @@ public interface TaskManager {
 
     Subtask getSubtaskById(Integer id);
 
-    void delAllTasks();
+    void removeAllTasks();
 
-    void delAllEpics();
+    void removeAllEpics();
 
-    void delAllSubtasks();
+    void removeAllSubtasks();
 
-    void delTaskById(Integer id);
+    void removeTaskById(Integer id);
 
-    void delEpicById(Integer epicId);
+    void removeEpicById(Integer epicId);
 
-    void delSubtaskById(Integer id);
+    void removeSubtaskById(Integer id);
 }
-

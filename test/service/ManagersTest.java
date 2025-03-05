@@ -6,9 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class ManagersTest {
 
     @Test
-    public void testDefaultManagersNotNull() {
-        assertNotNull(Managers.getDefault(), "default manager should not be null");
-        assertNotNull(Managers.getDefaultHistory(), "default history managers should not be null");
+    public void getDefaultManagersNotNullTest() {
+        assertNotNull(Managers.getDefault(), "default manager не должен быть равен null");
+    }
+
+    @Test
+    public void getDefaultHistoryManagersNotNullTest() {
+        assertNotNull(Managers.getDefaultHistory(), "default history managers не должен быть равен null");
     }
 }
-
