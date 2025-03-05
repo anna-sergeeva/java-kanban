@@ -33,7 +33,7 @@ public class HistoryManagerTest {
         historyManager.add(task1);
         List<Task> history = historyManager.getHistory();
         assertNotNull(history, "Список истории отсутствует");
-        assertEquals(1, history.size(), "История пустая");
+        assertEquals(List.of(task1), history, "История пустая");
         assertEquals(1, task1.getId(), "История сохранена неверно");
     }
 
@@ -46,7 +46,7 @@ public class HistoryManagerTest {
             i++;
         }
         List<Task> history = historyManager.getHistory();
-        assertEquals(1, history.size(), "Число записей в истории должно быть не более 1");
+        assertEquals(List.of(task1), history, "Число записей в истории должно быть не более 1");
     }
 
     @Test
@@ -57,7 +57,7 @@ public class HistoryManagerTest {
 
         historyManager.add(task);
         history = historyManager.getHistory();
-        assertEquals(1, history.size(), "История не сохранена");
+        assertEquals(List.of(task), history, "История не сохранена");
 
         historyManager.remove(1);
         history = historyManager.getHistory();
@@ -66,7 +66,7 @@ public class HistoryManagerTest {
         historyManager.add(task);
         historyManager.add(task);
         history = historyManager.getHistory();
-        assertEquals(1, history.size(), "История сохранена некорректно");
+        assertEquals(List.of(task), history, "История сохранена некорректно");
         assertEquals(1, task.getId(), "История сохранена некорректно");
     }
 
@@ -77,24 +77,24 @@ public class HistoryManagerTest {
         historyManager.add(subtask1);
         List<Task> history = historyManager.getHistory();
         assertNotNull(history, "Список истории отсутствует");
-        assertEquals(3, history.size(), "История сохранена некорректно");
+        assertEquals(List.of(task, epic, subtask1), history, "История сохранена некорректно");
         //удаление из начала истории
         historyManager.remove(1);
         history = historyManager.getHistory();
-        assertEquals(2, history.size(), "История сохранена некорректно");
+        assertEquals(List.of(epic, subtask1), history, "История сохранена некорректно");
         assertEquals(2, history.get(0).getId(), "История сохранена некорректно");
         assertEquals(3, history.get(1).getId(), "История сохранена некорректно");
         //удаление из середины истории
         historyManager.add(subtask2);
         historyManager.remove(3);
         history = historyManager.getHistory();
-        assertEquals(2, history.size(), "История сохранена некорректно");
+        assertEquals(List.of(epic, subtask2), history, "История сохранена некорректно");
         assertEquals(2, history.get(0).getId(), "История сохранена некорректно");
         assertEquals(4, history.get(1).getId(), "История сохранена некорректно");
         //удаление с конца истории
         historyManager.remove(4);
         history = historyManager.getHistory();
-        assertEquals(1, history.size(), "История сохранена некорректно");
+        assertEquals(List.of(epic), history, "История сохранена некорректно");
         assertEquals(2, history.get(0).getId(), "История сохранена некорректно");
     }
 
