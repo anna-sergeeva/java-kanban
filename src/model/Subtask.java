@@ -1,11 +1,16 @@
 package model;
 
 public class Subtask extends Task {
-    private Integer epicId;
+    private final Epic epic;
 
-    public Subtask(Integer id, TypeOfTask type, String name, StatusOfTask status, String description, Integer epicId) {
-        super(id, type, name, status, description);
-        this.epicId = epicId;
+    public Subtask(String name, String description, StatusOfTask status, Epic epic) {
+        super(name, description, status);
+        this.epic = epic;
+    }
+
+    public Subtask(String name, String description, StatusOfTask status, Epic epic, int id) {
+        super(name, description, status, id);
+        this.epic = epic;
     }
 
     @Override
@@ -13,25 +18,18 @@ public class Subtask extends Task {
         return TypeOfTask.SUBTASK;
     }
 
-
-    public Integer getEpicId() {
-        return epicId;
+    public Epic getEpic() {
+        return epic;
     }
-
-    public void setEpicId(Integer epicId) {
-        this.epicId = epicId;
-    }
-
-
 
     @Override
     public String toString() {
-        return "model.Subtask{" +
+        return "Subtask{" +
                 "name='" + getName() + '\'' +
                 ", description='" + getDescription() + '\'' +
                 ", id=" + getId() +
-                ", status='" + getStatus() + '\'' +
-                ", epicId=" + epicId +
+                ", status=" + getStatus() +
+                ", epic=" + getEpic() +
                 '}';
     }
 }

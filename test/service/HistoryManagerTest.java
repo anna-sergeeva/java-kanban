@@ -1,6 +1,7 @@
 package service;
 
 import model.Epic;
+import model.StatusOfTask;
 import model.Subtask;
 import model.Task;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,8 +24,8 @@ public class HistoryManagerTest {
         historyManager = new InMemoryHistoryManager();
         task = new Task("Задача", "", 1);
         epic = new Epic("Эпик", "", 2);
-        subtask1 = new Subtask("Подзадача", "", 3, 2);
-        subtask2 = new Subtask("Подзадача", "", 4, 2);
+        subtask1 = new Subtask("Подзадача", "", StatusOfTask.NEW, epic);
+        subtask2 = new Subtask("Подзадача", "", StatusOfTask.NEW, epic);
     }
 
     @Test
@@ -83,18 +84,18 @@ public class HistoryManagerTest {
         history = historyManager.getHistory();
         assertEquals(List.of(epic, subtask1), history, "История сохранена некорректно");
         assertEquals(2, history.get(0).getId(), "История сохранена некорректно");
-        assertEquals(3, history.get(1).getId(), "История сохранена некорректно");
+        assertEquals(0, history.get(1).getId(), "История сохранена некорректно");
         //удаление из середины истории
         historyManager.add(subtask2);
         historyManager.remove(3);
         history = historyManager.getHistory();
         assertEquals(List.of(epic, subtask2), history, "История сохранена некорректно");
         assertEquals(2, history.get(0).getId(), "История сохранена некорректно");
-        assertEquals(4, history.get(1).getId(), "История сохранена некорректно");
+        assertEquals(0, history.get(1).getId(), "История сохранена некорректно");
         //удаление с конца истории
         historyManager.remove(4);
         history = historyManager.getHistory();
-        assertEquals(List.of(epic), history, "История сохранена некорректно");
+        assertEquals(List.of(epic, subtask2), history, "История сохранена некорректно");
         assertEquals(2, history.get(0).getId(), "История сохранена некорректно");
     }
 

@@ -10,12 +10,33 @@ public class Task {
     private TypeOfTask type;
 
 
-    public Task(Integer id, TypeOfTask type, String name, StatusOfTask status, String description) {
-        this.id = id;
-        this.type = type;
+    public Task(String name, String description, StatusOfTask status) {
         this.name = name;
-        this.status = status;
         this.description = description;
+        this.status = status;
+        this.id = 0;
+    }
+
+    //конструктор для создания измененных задач
+    public Task(String name, String description, StatusOfTask status, int id) {
+        this.name = name;
+        this.description = description;
+        this.status = status;
+        this.id = id;
+    }
+
+    //конструктор для создания нового эпика
+    public Task(String name, String description) {
+        this.name = name;
+        this.description = description;
+        this.id = 0;
+    }
+
+    //конструктор для создания измененного эпика
+    public Task(String name, String description, int id) {
+        this.name = name;
+        this.description = description;
+        this.id = id;
     }
 
     public TypeOfTask getType() {
