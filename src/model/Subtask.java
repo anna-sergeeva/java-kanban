@@ -1,10 +1,15 @@
 package model;
 
 public class Subtask extends Task {
-    private Integer epicId;
+    protected Integer epicId;
 
-    public Subtask(String name, String description, Integer id, Integer epicId) {
-        super(name, description, id);
+    public Subtask(String name, String description, Integer epicId) {
+        super(name, description);
+        this.epicId = epicId;
+    }
+
+    public Subtask(Integer id, String name, String description, Integer epicId) {
+        super(id, name, description);
         this.epicId = epicId;
     }
 
@@ -17,6 +22,10 @@ public class Subtask extends Task {
         this.epicId = epicId;
     }
 
+    @Override
+    public TypeOfTask getTaskType() {
+        return TypeOfTask.SUBTASK;
+    }
 
     @Override
     public String toString() {
