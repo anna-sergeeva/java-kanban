@@ -2,6 +2,7 @@ package service;
 
 import model.*;
 
+
 public class TaskFormatter {
 
     public static Task fromString(String value) {
@@ -11,15 +12,16 @@ public class TaskFormatter {
         final String name = values[2];
         final StatusOfTask status = StatusOfTask.valueOf(values[3]);
         final String description = values[4];
-        if (type == TypeOfTask.TASK) {
-            Task task = new Task(id, name, description);
-            task.setStatus(status);
-            return task;
-        } if (TypeOfTask.SUBTASK == type) {
+        if (TypeOfTask.SUBTASK == type) {
             final Integer epicId = Integer.parseInt(values[5]);
             Subtask subtask = new Subtask(id, name, description, epicId);
             subtask.setStatus(status);
             return subtask;
+        }
+        if (type == TypeOfTask.TASK) {
+            Task task = new Task(id, name, description);
+            task.setStatus(status);
+            return task;
         } else {
             Epic epic = new Epic(id, name, description);
             epic.setStatus(status);
