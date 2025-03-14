@@ -1,47 +1,27 @@
-package model;
+ppackage model;
 
 import java.util.Objects;
 
 public class Task {
-    private String name;
-    private String description;
-    private Integer id;
-    private StatusOfTask status;
-    private TypeOfTask type;
+    protected String name;
+    protected String description;
+    protected Integer id;
+    protected StatusOfTask status;
 
 
-    public Task(String name, String description, StatusOfTask status) {
-        this.name = name;
-        this.description = description;
-        this.status = status;
-        this.id = 0;
-    }
-
-    //конструктор для создания измененных задач
-    public Task(String name, String description, StatusOfTask status, int id) {
-        this.name = name;
-        this.description = description;
-        this.status = status;
-        this.id = id;
-    }
-
-    //конструктор для создания нового эпика
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
-        this.id = 0;
+        this.status = StatusOfTask.NEW;
     }
 
-    //конструктор для создания измененного эпика
-    public Task(String name, String description, int id) {
+    public Task(Integer id, String name, String description) {
+        this.id = id;
         this.name = name;
         this.description = description;
-        this.id = id;
+        this.status = StatusOfTask.NEW;
     }
 
-    public TypeOfTask getType() {
-        return TypeOfTask.TASK;
-    }
 
     public String getName() {
         return name;
@@ -73,6 +53,10 @@ public class Task {
 
     public void setStatus(StatusOfTask status) {
         this.status = status;
+    }
+
+    public TypeOfTask getTaskType() {
+        return TypeOfTask.TASK;
     }
 
     @Override

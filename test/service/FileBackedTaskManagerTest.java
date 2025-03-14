@@ -1,49 +1,33 @@
-package service;
+package test.service;
 
-import model.StatusOfTask;
-import model.Task;
-
+import exceptions.ManagerSaveException;
 import org.junit.jupiter.api.Test;
+import model.*;
+import service.FileBackedTaskManager;
+import java.io.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.io.File;
-import java.io.IOException;
-
-
-class FileBackedTaskManagerTest {
-
-    @Test
-    void loadFromEmptyFile() throws IOException {
-        File file = File.createTempFile("testEmptyFile-", ".csv");
-        FileBackedTaskManager taskManager = FileBackedTaskManager.loadFromFile(file);
-        assertNotNull(taskManager, "taskManager is null!");
-        assertEquals(taskManager.getAllTasks().size(), 0, "Количество задач не равно 0");
-        assertEquals(taskManager.getHistory().size(), 0, "Количество задач в истории не равно 0");
-    }
+public class FileBackedTaskManagerTest {
+    File file;
+    FileBackedTaskManager fileBackedTaskManager;
 
     @Test
-    void saveToEmptyFile() throws IOException {
-        File file = File.createTempFile("testEmptyFile-", ".csv");
-        FileBackedTaskManager taskManager = new FileBackedTaskManager(file);
-        taskManager.save();
-        FileBackedTaskManager taskManagerFromFile = FileBackedTaskManager.loadFromFile(file);
-        assertNotNull(taskManagerFromFile, "taskManagerFromFile is null!");
-        assertEquals(taskManagerFromFile.getAllTasks().size(), 0, "Количество задач не равно 0");
-        assertEquals(taskManagerFromFile.getHistory().size(), 0, "Количество задач в истории не равно 0");
-    }
+    public void loadAndSaveTest() throws ManagerSaveException, IOException {
+        file = File.createTempFile("testEmptyFile-", ".csv");
+        fileBackedTaskManager = new FileBackedTaskManager(file);
+        Task task = new Task(1, "Задача 1", "Задача 1");
+        Epic epic = new Epic(2, "Эпик 1", "Эпик 1");
+        Subtask subtask = new Subtask(3, "Подзадача 1", "Подзадача 1", 2);
+        fileBackedTaskManager.addNewTask(task);
+        fileBackedTaskManager.addNewEpic(epic);
+        fileBackedTaskManager.addNewSubtask(subtask);
+        FileBackedTaskManager fileBackedTaskManager = FileBackedTaskManager.loadFromFile(file);
 
-    @Test
-    void saveLoadFile() throws IOException {
-        File file = File.createTempFile("testEmptyFile-", ".csv");
-        FileBackedTaskManager taskManager = new FileBackedTaskManager(file);
-        Task task = new Task("Test saveLoadFile", "Test saveLoadFile description",  StatusOfTask.NEW);
-        final int taskId = taskManager.addTask(task);
-        taskManager.getTaskById(taskId);
-
-        FileBackedTaskManager taskManagerFromFile = FileBackedTaskManager.loadFromFile(file);
-        assertNotNull(taskManagerFromFile, "taskManagerFromFile is null!");
-        assertEquals(taskManagerFromFile.getAllTasks().size(), taskManager.getAllTasks().size(), "Количество задач в менеджерах не равно");
-        assertEquals(taskManagerFromFile.getHistory().size(), taskManagerFromFile.getHistory().size(), "Количество задач в истории менеджеров не равно");
+        assertEquals(fileBackedTaskManager.getListOfTasks(), fileBackedTaskManager.getListOfTasks(),
+                "Произошла ошибка при записи или чтении файла с задачами");
+        assertEquals(fileBackedTaskManager.getListOfEpics(), fileBackedTaskManager.getListOfEpics(),
+                "Произошла ошибка при записи или чтении файла с эпиками");
+        assertEquals(fileBackedTaskManager.getListOfSubtasks(), fileBackedTaskManager.getListOfSubtasks(),
+                "Произошла ошибка при записи или чтении файла с подзадачами");
     }
 }
