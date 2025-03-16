@@ -9,12 +9,15 @@ import java.nio.file.Path;
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private final File file;
 
+    private int idOfTasksCounter = 1;
+
+
     public FileBackedTaskManager(File file) {
         this.file = file;
     }
 
 
-    public static FileBackedTaskManager loadFromFile(File file) {
+    public static FileBackedTaskManager loadFromFile(File file) throws ManagerSaveException {
         FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
@@ -25,8 +28,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     continue;
                 }
                 Task task = TaskFormatter.fromString(line);
-                if (task.getId() > fileBackedTaskManager.id) {
-                    fileBackedTaskManager.id = task.getId() + 1;
+                if (task.getId() > fileBackedTaskManager.idOfTasksCounter) {
+                    fileBackedTaskManager.idOfTasksCounter = task.getId();
                 }
                 switch (task.getTaskType()) {
                     case TASK:
@@ -115,19 +118,19 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void removeTaskById(int id) {
+    public void removeTaskById(Integer id) {
         super.removeTaskById(id);
         save();
     }
 
     @Override
-    public void removeEpicById(int id) {
+    public void removeEpicById(Integer id) {
         super.removeEpicById(id);
         save();
     }
 
     @Override
-    public void removeSubtaskById(int idSub) {
+    public void removeSubtaskById(Integer idSub) {
         super.removeSubtaskById(idSub);
         save();
     }

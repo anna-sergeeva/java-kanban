@@ -21,13 +21,13 @@ public class FileBackedTaskManagerTest {
         fileBackedTaskManager.addNewTask(task);
         fileBackedTaskManager.addNewEpic(epic);
         fileBackedTaskManager.addNewSubtask(subtask);
-        FileBackedTaskManager fileBackedTaskManager = FileBackedTaskManager.loadFromFile(file);
+        FileBackedTaskManager fileManager = FileBackedTaskManager.loadFromFile(file);
 
-        assertEquals(fileBackedTaskManager.getListOfTasks(), fileBackedTaskManager.getListOfTasks(),
+        assertEquals(fileBackedTaskManager.getListOfTasks(), fileManager.getListOfTasks(),
                 "Произошла ошибка при записи или чтении файла с задачами");
-        assertEquals(fileBackedTaskManager.getListOfEpics(), fileBackedTaskManager.getListOfEpics(),
+        assertEquals(fileBackedTaskManager.getListOfEpics(), fileManager.getListOfEpics(),
                 "Произошла ошибка при записи или чтении файла с эпиками");
-        assertEquals(fileBackedTaskManager.getListOfSubtasks(), fileBackedTaskManager.getListOfSubtasks(),
+        assertEquals(fileBackedTaskManager.getListOfSubtasks(), fileManager.getListOfSubtasks(),
                 "Произошла ошибка при записи или чтении файла с подзадачами");
     }
 }
