@@ -9,7 +9,7 @@ import static model.StatusOfTask.NEW;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-public class TaskManagerTest{
+public class InMemoryTaskManagerTest {
     InMemoryTaskManager taskManager;
     Task task;
     Epic epic;
@@ -82,7 +82,7 @@ public class TaskManagerTest{
 
     @Test
     void updateEpicTest() {
-        taskManager.updateEpic(epic);
+        taskManager.updateEpicStatus(epic);
         Epic updEpic3 = taskManager.getEpicById(2);
         assertEquals(epic, updEpic3, "Одинаковые задачи не совпадают.");
     }
