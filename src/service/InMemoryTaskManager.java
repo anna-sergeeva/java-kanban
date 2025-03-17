@@ -163,7 +163,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
         for (Epic epic : epics.values()) {
             epic.clearSubtaskId();
-            updateEpic(epic);
+            updateEpicStatus(epic);
         }
         subtasks.clear();
     }
@@ -196,7 +196,7 @@ public class InMemoryTaskManager implements TaskManager {
             return;
         }
         epic.getSubtaskId().remove(id);
-        updateEpic(epic);
+        updateEpicStatus(epic);
         subtasks.remove(id);
         historyManager.remove(id);
     }
@@ -207,7 +207,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
 
-    private void updateEpicStatus(Epic epic) {
+    public void updateEpicStatus(Epic epic) {
         int newCount = 0;
         int doneCount = 0;
         for (int itemId : epic.getSubtaskId()) {

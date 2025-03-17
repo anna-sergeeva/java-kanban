@@ -9,15 +9,11 @@ import java.nio.file.Path;
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private final File file;
 
-    private int idOfTasksCounter = 1;
-
-
     public FileBackedTaskManager(File file) {
         this.file = file;
     }
 
-
-    public static FileBackedTaskManager loadFromFile(File file) throws ManagerSaveException {
+    public static FileBackedTaskManager loadFromFile(File file) {
         FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
@@ -28,8 +24,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     continue;
                 }
                 Task task = TaskFormatter.fromString(line);
-                if (task.getId() > fileBackedTaskManager.idOfTasksCounter) {
-                    fileBackedTaskManager.idOfTasksCounter = task.getId();
+                if (task.getId() > fileBackedTaskManager.id) {
+                    fileBackedTaskManager.id = task.getId();
                 }
                 switch (task.getTaskType()) {
                     case TASK:
