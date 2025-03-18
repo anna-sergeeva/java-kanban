@@ -2,20 +2,27 @@ package model;
 
 import java.util.ArrayList;
 
-public class Epic extends Task {
-    private ArrayList<Integer> subtaskId;
 
-    public Epic(String name, String description, Integer id, ArrayList<Integer> subtaskId) {
-        super(name, description, id);
-        this.subtaskId = subtaskId;
+public class Epic extends Task {
+    protected ArrayList<Integer> subtaskId;
+
+    public Epic(String name, String description) {
+        super(name, description);
+        subtaskId = new ArrayList<>();
     }
 
-    public Epic(String name, String description, Integer id) {
-        super(name, description, id);
+    public Epic(Integer id, String name, String description) {
+        super(id, name, description);
+        subtaskId = new ArrayList<>();
     }
 
     public ArrayList<Integer> getSubtaskId() {
         return subtaskId;
+    }
+
+    @Override
+    public TypeOfTask getTaskType() {
+        return TypeOfTask.EPIC;
     }
 
     public void setSubtaskId(ArrayList<Integer> subtaskId) {

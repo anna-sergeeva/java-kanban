@@ -3,16 +3,22 @@ package model;
 import java.util.Objects;
 
 public class Task {
-    private String name;
-    private String description;
-    private Integer id;
-    private StatusOfTask status;
+    protected String name;
+    protected String description;
+    protected Integer id;
+    protected StatusOfTask status;
 
 
-    public Task(String name, String description, Integer id) {
+    public Task(String name, String description) {
         this.name = name;
         this.description = description;
+        this.status = StatusOfTask.NEW;
+    }
+
+    public Task(Integer id, String name, String description) {
         this.id = id;
+        this.name = name;
+        this.description = description;
         this.status = StatusOfTask.NEW;
     }
 
@@ -47,6 +53,10 @@ public class Task {
 
     public void setStatus(StatusOfTask status) {
         this.status = status;
+    }
+
+    public TypeOfTask getTaskType() {
+        return TypeOfTask.TASK;
     }
 
     @Override

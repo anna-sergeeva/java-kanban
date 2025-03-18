@@ -1,10 +1,13 @@
-package service;
+package test.service;
 
 import model.Epic;
 import model.Subtask;
 import model.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import service.HistoryManager;
+import service.InMemoryHistoryManager;
+
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -12,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class HistoryManagerTest {
 
-    HistoryManager historyManager = new InMemoryHistoryManager();
+    HistoryManager historyManager;
     Task task;
     Epic epic;
     Subtask subtask1, subtask2;
@@ -21,32 +24,34 @@ public class HistoryManagerTest {
     @BeforeEach
     void setUp() {
         historyManager = new InMemoryHistoryManager();
-        task = new Task("Задача", "", 1);
-        epic = new Epic("Эпик", "", 2);
-        subtask1 = new Subtask("Подзадача", "", 3, 2);
-        subtask2 = new Subtask("Подзадача", "", 4, 2);
+        task = new Task("Задача", "");
+        epic = new Epic("Эпик", "");
+        subtask1 = new Subtask("Подзадача", "", 2);
+        subtask2 = new Subtask("Подзадача", "", 2);
+        task.setId(1);
+        epic.setId(2);
+        subtask1.setId(3);
+        subtask2.setId(4);
     }
 
     @Test
     void addTaskToHistoryTest() {
-        Task task1 = new Task("T1", "", 1);
-        historyManager.add(task1);
+        historyManager.add(task);
         List<Task> history = historyManager.getHistory();
         assertNotNull(history, "Список истории отсутствует");
-        assertEquals(List.of(task1), history, "История пустая");
-        assertEquals(1, task1.getId(), "История сохранена неверно");
+        assertEquals(List.of(task), history, "История пустая");
+        assertEquals(1, task.getId(), "История сохранена неверно");
     }
 
     @Test
     void maxAttemptsToHistoryTest() {
-        Task task1 = new Task("T1", "", 1);
         int i = 0;
         while (i < 20) {
-            historyManager.add(task1);;
+            historyManager.add(task);;
             i++;
         }
         List<Task> history = historyManager.getHistory();
-        assertEquals(List.of(task1), history, "Число записей в истории должно быть не более 1");
+        assertEquals(List.of(task), history, "Число записей в истории должно быть не более 1");
     }
 
     @Test
