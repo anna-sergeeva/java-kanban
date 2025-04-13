@@ -253,7 +253,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
 
-    private void updateEpicStatus (Epic epic) {
+    private void updateEpicStatus(Epic epic) {
         int newCount = 0;
         int doneCount = 0;
         if (!epic.getSubtaskId().isEmpty()) {
@@ -278,7 +278,7 @@ public class InMemoryTaskManager implements TaskManager {
         epic.setStatus(StatusOfTask.NEW);
     }
 
-    private void updateEpicDuration (Epic epic){
+    private void updateEpicDuration(Epic epic) {
         LocalDateTime startEpic = LocalDateTime.MAX;
         LocalDateTime endEpic = LocalDateTime.MIN;
         Duration overallDuration = Duration.ofMinutes(0);
@@ -303,7 +303,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    private boolean isTaskCrossed (Task task){
+    private boolean isTaskCrossed(Task task) {
         if (getPrioritizedTasks().isEmpty()) {
             return true;
         }
