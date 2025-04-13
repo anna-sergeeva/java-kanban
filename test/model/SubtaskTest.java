@@ -3,13 +3,19 @@ package test.model;
 import model.Subtask;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class SubtaskTest {
     @Test
-    public void equalityTest() {
-        Subtask s0 = new Subtask("Подзадача 1", "Тестируем подзадачу 1", 1);
-        Subtask s1 = new Subtask("Подзадача 2", "Тестируем подзадачу 2", 1);
+    public void equalityByIdTest() {
+        Subtask s0 = new Subtask("Подзадача", "Подзадача", 1, Duration.ofMinutes(2),
+                LocalDateTime.now());
+        Subtask s1 = new Subtask("Подзадача", "Подзадача", 1, Duration.ofMinutes(2),
+                LocalDateTime.now());
         assertEquals(s0, s1, "Экземпляры подзадач не равны");
     }
 }
+
