@@ -6,12 +6,15 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private final File file;
+
 
     public FileBackedTaskManager(File file) {
         this.file = file;
     }
+
 
     public static FileBackedTaskManager loadFromFile(File file) {
         FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
@@ -49,7 +52,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return fileBackedTaskManager;
     }
 
-    private void save() {
+    public void save() {
         Path path = file.toPath();
         if (!Files.exists(path)) {
             try {
@@ -114,19 +117,19 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void removeTaskById(Integer id) {
+    public void removeTaskById(int id) {
         super.removeTaskById(id);
         save();
     }
 
     @Override
-    public void removeEpicById(Integer id) {
+    public void removeEpicById(int id) {
         super.removeEpicById(id);
         save();
     }
 
     @Override
-    public void removeSubtaskById(Integer idSub) {
+    public void removeSubtaskById(int idSub) {
         super.removeSubtaskById(idSub);
         save();
     }

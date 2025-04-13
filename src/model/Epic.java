@@ -1,10 +1,13 @@
 package model;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 
 public class Epic extends Task {
     protected ArrayList<Integer> subtaskId;
+    protected LocalDateTime endTime;
+
 
     public Epic(String name, String description) {
         super(name, description);
@@ -38,14 +41,21 @@ public class Epic extends Task {
     }
 
     @Override
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    @Override
     public String toString() {
-        return "model.Epic{" +
-                "name='" + getName() + '\'' +
-                ", description='" + getDescription() + '\'' +
-                ", id=" + getId() +
-                ", status='" + getStatus() + '\'' +
-                ", subtaskId=" + subtaskId +
+        return "Class.Epic{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", id=" + id +
+                ", status='" + status + '\'' +
                 '}';
     }
 }
-
