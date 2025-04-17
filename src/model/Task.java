@@ -4,12 +4,12 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class Task implements Comparable<Task> {
+public class Task {
     protected String name;
     protected String description;
     protected Integer id;
     protected StatusOfTask status;
-    protected Duration duration = Duration.ofMinutes(0);
+    protected Duration duration;
     protected LocalDateTime startTime;
 
 
@@ -122,11 +122,6 @@ public class Task implements Comparable<Task> {
                 ", duration=" + duration +
                 ", startTime=" + startTime +
                 '}';
-    }
-
-    @Override
-    public int compareTo(Task o) {
-        return this.startTime.compareTo(o.startTime);
     }
 
 }

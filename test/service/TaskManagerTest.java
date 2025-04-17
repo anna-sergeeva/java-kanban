@@ -14,31 +14,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 public abstract class TaskManagerTest<T extends TaskManager> {
-    protected TaskManager taskManager;
+    protected T taskManager;
     protected Task task;
     protected Epic epic;
     protected Subtask subtask;
 
 
-    @BeforeEach
-    public void beforeEach() {
-        taskManager = initTaskManager();
-    }
-
-    TaskManager initTaskManager() {
-        return Managers.getDefault();
-    }
-
     @Test
     void addTaskTest() {
-        task = new Task("Задача", "Задача", Duration.ofMinutes(5), LocalDateTime.now());
-        taskManager.addNewTask(task);
-        epic = new Epic("Эпик", "Эпик");
-        taskManager.addNewEpic(epic);
-        subtask = new Subtask("Подзадача", "Подзадача", epic.getId(), Duration.ofMinutes(2),
-                LocalDateTime.now());
-        taskManager.addNewSubtask(subtask);
-        assertEquals(2, taskManager.getListOfTasks().size(), "Число задач определяется некорректно");
+        assertEquals(1, taskManager.getListOfTasks().size(), "Число задач определяется некорректно");
         assertNotEquals(task.getId(), subtask.getId(), "Идентификатор задач работает некорректно");
         assertEquals("Задача", task.getName(), "Имя задачи изменилось.");
         assertEquals("Задача", task.getDescription(), "Описание задачи изменилось.");
@@ -47,16 +31,12 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void addEpicTest() {
-        task = new Task("Задача", "Задача", Duration.ofMinutes(5), LocalDateTime.now());
-        taskManager.addNewTask(task);
-        epic = new Epic("Эпик", "Эпик");
-        taskManager.addNewEpic(epic);
-        assertEquals(2, taskManager.getListOfEpics().size(), "Число эпиков определяется некорректно");
+        assertEquals(1, taskManager.getListOfEpics().size(), "Число эпиков определяется некорректно");
         assertNotEquals(task.getId(), epic.getId(), "Идентификатор задач работает некорректно");
 
         assertNotNull(epic.getId(), "Идентификатор эпика не найден");
         assertNotNull(taskManager.getListOfEpics(), "Эпики в списке не найдены");
-        assertEquals(2, taskManager.getListOfEpics().size(), "Число созданных и найденных в списке эпиков не совпадает");
+        assertEquals(1, taskManager.getListOfEpics().size(), "Число созданных и найденных в списке эпиков не совпадает");
         assertNotNull(epic.getSubtaskId(), "Подзадачи в эпике не созданы");
         assertEquals(NEW, epic.getStatus(), "Статус созданного эпика должен быть NEW");
         assertEquals(NEW, epic.getStatus(), "Статус  эпика не NEW");
@@ -65,41 +45,24 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void addSubtaskTest() {
-        epic = new Epic("Эпик", "Эпик");
-        taskManager.addNewEpic(epic);
-        subtask = new Subtask("Подзадача", "Подзадача", epic.getId(), Duration.ofMinutes(2),
-                LocalDateTime.now());
-        taskManager.addNewSubtask(subtask);
-        assertEquals(2, taskManager.getListOfSubtasks().size(), "Число подзадач определяется некорректно");
+        assertEquals(1, taskManager.getListOfSubtasks().size(), "Число подзадач определяется некорректно");
         assertNotEquals(epic.getId(), subtask.getId(), "Идентификатор задач работает некорректно");
         assertNotNull(subtask, "Идентификатор подзадачи не найден");
-        assertEquals(5, subtask.getId(), "Идентификаторы подзадач не равны друг другу");
+        assertEquals(3, subtask.getId(), "Идентификаторы подзадач не равны друг другу");
         assertNotNull(taskManager.getListOfSubtasks(), "Подзадачи в списке не найдены");
-        assertEquals(2, taskManager.getListOfSubtasks().size(), "Число созданных и найденных в списке подзадач не совпадает");
+        assertEquals(1, taskManager.getListOfSubtasks().size(), "Число созданных и найденных в списке подзадач не совпадает");
         assertNotNull(subtask.getEpicId(), "Эпик подзадачи не найден");
         assertNotNull(taskManager.getListOfSubtasksOfEpic(epic.getId()), "Список подзадач в эпике не обновился");
     }
 
     @Test
     void getSubtasksOfEpicTest() {
-        epic = new Epic("Эпик", "Эпик");
-        taskManager.addNewEpic(epic);
-        subtask = new Subtask("Подзадача", "Подзадача", epic.getId(), Duration.ofMinutes(2),
-                LocalDateTime.now());
-        taskManager.addNewSubtask(subtask);
         assertNotNull(taskManager.getListOfSubtasksOfEpic(epic.getId()), "Эпик не содержит подзадач");
         assertEquals(1, taskManager.getListOfSubtasksOfEpic(epic.getId()).size(), "Число подзадач в эпике не совпадает с ожидаемым");
     }
 
     @Test
     void getHistoryTest() {
-        task = new Task("Задача", "Задача", Duration.ofMinutes(5), LocalDateTime.now());
-        taskManager.addNewTask(task);
-        epic = new Epic("Эпик", "Эпик");
-        taskManager.addNewEpic(epic);
-        subtask = new Subtask("Подзадача", "Подзадача", epic.getId(), Duration.ofMinutes(2),
-                LocalDateTime.now());
-        taskManager.addNewSubtask(subtask);
         taskManager.getTaskById(1);
         taskManager.getEpicById(2);
         taskManager.getSubtaskById(3);
@@ -111,11 +74,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     public void updateEpicStatusTest() {
-        epic = new Epic("Эпик", "Эпик");
-        taskManager.addNewEpic(epic);
-        subtask = new Subtask("Подзадача", "Подзадача", epic.getId(), Duration.ofMinutes(2),
-                LocalDateTime.now());
-        taskManager.addNewSubtask(subtask);
         subtask.setStatus(StatusOfTask.IN_PROGRESS);
         taskManager.updateEpic(epic);
         assertEquals(epic.getStatus(), StatusOfTask.IN_PROGRESS, "функция updateEpicStatus неправильно обновила статус эпика");
@@ -172,16 +130,11 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void removeSubtaskByIdTest() {
-        epic = new Epic("Эпик", "Эпик");
-        taskManager.addNewEpic(epic);
-        subtask = new Subtask("Подзадача", "Подзадача", epic.getId(), Duration.ofMinutes(2),
-                LocalDateTime.now());
-        taskManager.addNewSubtask(subtask);
         taskManager.removeSubtaskById(subtask.getId());
         assertNull(taskManager.getSubtaskById(2), "Задача не удалена");
         List<Subtask> subtasks = taskManager.getListOfSubtasks();
         assertNotNull(subtasks, "Удалены не все подзадачи.");
-        assertEquals(1, subtasks.size(), "Некорректное число подзадач после удаления");
+        assertEquals(0, subtasks.size(), "Некорректное число подзадач после удаления");
     }
 
     @Test
