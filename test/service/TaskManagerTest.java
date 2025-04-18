@@ -84,7 +84,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Subtask subtask2 = new Subtask("Подазадача2", "Подзадача2", epic.getId(), Duration.ofMinutes(10),
                 LocalDateTime.now().minusMinutes(20L));
         taskManager.addNewSubtask(subtask2);
-        assertEquals(epic.getStatus(), StatusOfTask.IN_PROGRESS,
+        assertEquals(epic.getStatus(), StatusOfTask.DONE,
                 "функция updateEpicStatus после добавления новой подзадачи некорректно обновила статус эпика");
     }
 

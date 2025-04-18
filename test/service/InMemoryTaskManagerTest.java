@@ -18,7 +18,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
         epic = new Epic("Эпик", "Эпик");
         taskManager.addNewEpic(epic);
         subtask = new Subtask("Подзадача", "Подзадача", epic.getId(), Duration.ofMinutes(30),
-                LocalDateTime.now().minusMinutes(10L));
+                LocalDateTime.now().minusMinutes(45L));
         taskManager.addNewSubtask(subtask);
     }
 

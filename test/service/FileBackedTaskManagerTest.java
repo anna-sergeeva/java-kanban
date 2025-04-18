@@ -66,10 +66,14 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     @Test
     void saveLoadFile() throws IOException {
         taskManager.getTaskById(1);
+        taskManager.getTaskById(2);
+        taskManager.getTaskById(3);
         FileBackedTaskManager taskManagerFromFile = FileBackedTaskManager.loadFromFile(file);
         assertNotNull(taskManagerFromFile, "taskManagerFromFile принимает null!");
         assertEquals(taskManagerFromFile.getListOfTasks().size(), taskManager.getListOfTasks().size(), "Количество задач в менеджерах не равно");
         assertEquals(taskManagerFromFile.getHistory().size(), taskManagerFromFile.getHistory().size(), "Количество задач в истории менеджеров не равно");
+        assertEquals(taskManagerFromFile.getListOfTasks(), taskManager.getListOfTasks(), "Задачи в менеджерах отличаются");
+        assertEquals(taskManagerFromFile.getListOfEpics(), taskManager.getListOfEpics(), "Задачи в менеджерах отличаются");
+        assertEquals(taskManagerFromFile.getListOfSubtasks(), taskManager.getListOfSubtasks(), "Задачи в менеджерах отличаются");
     }
-
 }
