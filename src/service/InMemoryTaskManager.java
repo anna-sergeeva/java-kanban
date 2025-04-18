@@ -18,7 +18,7 @@ public class InMemoryTaskManager implements TaskManager {
     final HistoryManager historyManager = Managers.getDefaultHistory();
 
 
-    final Comparator<Task> COMPARATOR = Comparator.nullsLast(Comparator.comparing(Task::getStartTime)).thenComparing(Task::getId);
+    final Comparator<Task> Comparator = Comparator.nullsLast(Comparator.comparing(Task::getStartTime)).thenComparing(Task::getId);
 
 
     @Override
