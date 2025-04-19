@@ -2,13 +2,17 @@ package test.model;
 
 import model.Task;
 import org.junit.jupiter.api.Test;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class TaskTest {
     @Test
-    public void equalityTest() {
-        Task t0 = new Task("Задача 1", "Тестируем задачу 1");
-        Task t1 = new Task("Задача2", "Тестируем задачу 2");
+    public void equalityByIdTest() {
+        Task t0 = new Task("Задача", "Задача",Duration.ofMinutes(5), LocalDateTime.now());
+        Task t1 = new Task("Задача", "Задача",Duration.ofMinutes(5), LocalDateTime.now());
         assertEquals(t0, t1, "Экземпляры задач не равны");
     }
 }
