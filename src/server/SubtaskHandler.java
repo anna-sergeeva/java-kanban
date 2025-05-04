@@ -68,7 +68,7 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
                 return;
             }
             if (!taskManager.isTaskNotCrossed(taskDeserialized)) {
-                sendText(exchange, "ПДобавляемая задача пересекается с существующими", 406);
+                sendText(exchange, "Добавляемая задача пересекается с существующими", 406);
                 return;
             }
             if (taskDeserialized.getId() == null || taskDeserialized.getId() == 0) {
