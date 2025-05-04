@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import model.Epic;
-import model.Subtask;
 import service.TaskManager;
 
 import java.io.IOException;
@@ -30,8 +29,6 @@ public class EpicHandler extends BaseHttpHandler implements HttpHandler {
             getTasksHandle(exchange, gson);
         } else if (requestMethod.equals("GET") && pathParts.length == 3 && pathParts[1].equals("epics")) {
             getTaskHandle(exchange, gson, pathParts);
-        } else if (requestMethod.equals("GET") && pathParts.length == 4 && pathParts[1].equals("epics") && pathParts[3].equals("subtasks")) {
-            getSubtasksHandle(exchange, gson, pathParts);
         } else if (requestMethod.equals("POST") && pathParts.length == 2 && pathParts[1].equals("epics")) {
             postTaskHandle(exchange, gson);
         } else if (requestMethod.equals("DELETE") && pathParts.length == 3 && pathParts[1].equals("epics")) {
@@ -50,7 +47,7 @@ public class EpicHandler extends BaseHttpHandler implements HttpHandler {
             sendText(exchange, "Произошла ошибка при обработке запроса" + exp.getMessage(), 500);
         }
     }
-    
+
 
     private void getTaskHandle(HttpExchange exchange, Gson gson, String[] pathParts) throws IOException {
         try {
