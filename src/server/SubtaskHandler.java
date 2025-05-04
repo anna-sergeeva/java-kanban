@@ -67,7 +67,7 @@ public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
                 sendText(exchange, "НПроизошла ошибка при обработке запроса, тело запроса не преобразовано в подзадачу", 500);
                 return;
             }
-            if (taskManager.isTaskNotCrossed(taskDeserialized)) {
+            if (!taskManager.isTaskNotCrossed(taskDeserialized)) {
                 sendText(exchange, "ПДобавляемая задача пересекается с существующими", 406);
                 return;
             }

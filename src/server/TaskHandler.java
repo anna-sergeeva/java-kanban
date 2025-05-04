@@ -69,7 +69,7 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
                 sendText(exchange, "Произошла ошибка при обработке запроса, тело запроса не преобразовано в задачу", 500);
                 return;
             }
-            if (taskManager.isTaskNotCrossed(taskDeserialized)) {
+            if (!taskManager.isTaskNotCrossed(taskDeserialized)) {
                 sendText(exchange, "Добавляемая задача пересекается с существующими", 406);
                 return;
             }
