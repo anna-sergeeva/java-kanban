@@ -50,18 +50,7 @@ public class EpicHandler extends BaseHttpHandler implements HttpHandler {
             sendText(exchange, "Произошла ошибка при обработке запроса" + exp.getMessage(), 500);
         }
     }
-
-    private void getSubtasksHandle(HttpExchange exchange, Gson gson, String[] pathParts) throws IOException {
-        try {
-            int id = Integer.parseInt(pathParts[2]);
-            Epic task = taskManager.getEpicById(id);
-            List<Subtask> tasks = taskManager.getSubtasksOfEpic(task);
-            String text = gson.toJson(tasks);
-            sendText(exchange, text, 200);
-        } catch (Exception e) {
-            sendText(exchange, "Произошла ошибка при обработке запроса " + e.getMessage(), 500);
-        }
-    }
+    
 
     private void getTaskHandle(HttpExchange exchange, Gson gson, String[] pathParts) throws IOException {
         try {
