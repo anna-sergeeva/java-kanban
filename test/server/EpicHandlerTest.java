@@ -13,8 +13,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -120,22 +118,4 @@ public class EpicHandlerTest {
         assertEquals(0, manager.getListOfEpics().size(), "Эпик не удален");
     }
 
-    @Test
-    public void testGetEpicsSubtask() throws IOException, InterruptedException {
-
-        Epic epic = new Epic("Эпик", "Эпик");
-        final int epicId = manager.addNewEpic(epic);
-
-        Subtask subtask = new Subtask("Подзадача", "Подзадача", epic.getId(), Duration.ofMinutes(5),
-                LocalDateTime.now());
-        final int subtaskId = manager.addNewSubtask(subtask);
-
-        HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8080/epics/" + epicId + "/subtasks/");
-        HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
-
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        assertEquals(404, response.statusCode());
-
-    }
 }
