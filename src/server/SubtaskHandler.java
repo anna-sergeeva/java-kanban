@@ -1,131 +1,100 @@
 package server;
 
-import com.google.gson.*;
-import model.*;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.AfterEach;
-import service.InMemoryTaskManager;
+import com.google.gson.Gson;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import model.Subtask;
 import service.TaskManager;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.Duration;
-import java.time.LocalDateTime;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+public class SubtaskHandler extends BaseHttpHandler implements HttpHandler {
+    private final TaskManager taskManager;
+    private final Gson gson;
 
-public class SubtaskHandlerTest {
-
-    TaskManager manager = new InMemoryTaskManager();
-    HttpTaskServer server = new HttpTaskServer(manager);
-    Gson gson = HttpTaskServer.getGson();
-    Epic epic = new Epic("Эпик", "Эпик");
-    Subtask subtask = new Subtask("Подзадача", "Подзадача", epic.getId(), Duration.ofMinutes(5),
-                LocalDateTime.now());
-
-    public SubtaskHandlerTest() throws IOException {
+    SubtaskHandler(TaskManager taskManager, Gson gson) {
+        this.taskManager = taskManager;
+        this.gson = gson;
     }
 
-    @BeforeEach
-    public void setUp() {
-        manager.removeAllTasks();
-        manager.removeAllSubtasks();
-        manager.removeAllEpics();
-        server.start();
+    @Override
+    public void handle(HttpExchange exchange) throws IOException {
+        String requestMethod = exchange.getRequestMethod();
+        String requestPath = exchange.getRequestURI().getPath();
+        String[] pathParts = requestPath.split("/");
+        if (requestMethod.equals("GET") && pathParts.length == 2 && pathParts[1].equals("subtasks")) {
+            getTasksHandle(exchange, gson);
+        } else if (requestMethod.equals("GET") && pathParts.length == 3 && pathParts[1].equals("subtasks")) {
+            getTaskHandle(exchange, gson, pathParts);
+        } else if (requestMethod.equals("POST") && pathParts.length == 2 && pathParts[1].equals("subtasks")) {
+            postTaskHandle(exchange, gson);
+        } else if (requestMethod.equals("DELETE") && pathParts.length == 3 && pathParts[1].equals("subtasks")) {
+            deleteTaskHandle(exchange, pathParts);
+        } else {
+            sendText(exchange, "Метод не найден", 404);
+        }
     }
 
-    @AfterEach
-    public void shutDown() throws IOException {
-        server.stop();
+    private void getTasksHandle(HttpExchange exchange, Gson gson) throws IOException {
+        try {
+            List<Subtask> tasks = taskManager.getListOfSubtasks();
+            String text = gson.toJson(tasks);
+            sendText(exchange, text, 200);
+        } catch (Exception exp) {
+            sendText(exchange, "Произошла ошибка при обработке запроса" + exp.getMessage(), 500);
+        }
     }
 
-    @Test
-    public void testAddSubtask() throws IOException, InterruptedException {
-        final int epicId = manager.addNewEpic(epic);
-        subtask = new Subtask("Подзадача", "Подзадача", epic.getId(), Duration.ofMinutes(5),
-                LocalDateTime.now());
-        String taskJson = gson.toJson(subtask);
-
-        HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8081/subtasks");
-        HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(taskJson)).build();
-
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        assertEquals(201, response.statusCode());
-
-        List<Subtask> tasksFromManager = manager.getListOfSubtasks();
-
-        assertNotNull(tasksFromManager, "Метод не вернул подзадачи");
-        assertEquals(1, tasksFromManager.size(), "Некорректное количество подзадач");
-        assertEquals("Подзадача", tasksFromManager.get(0).getName(), "Некорректное имя подзадачи");
+    private void getTaskHandle(HttpExchange exchange, Gson gson, String[] pathParts) throws IOException {
+        try {
+            int id = Integer.parseInt(pathParts[2]);
+            Subtask task = taskManager.getSubtaskById(id);
+            sendText(exchange, gson.toJson(task), 200);
+        } catch (Exception e) {
+            sendText(exchange, "Подзадача с идентификатором " + pathParts[2] + " не найдена", 404);
+        }
     }
 
-    @Test
-    public void testGetTasks() throws IOException, InterruptedException {
-        final int epicId = manager.addNewEpic(epic);
-        subtask = new Subtask("Подзадача", "Подзадача", epic.getId(), Duration.ofMinutes(5),
-                LocalDateTime.now());
-        manager.addNewSubtask(subtask);
-
-        HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8081/subtasks");
-        HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
-
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        assertEquals(200, response.statusCode());
-
-        JsonElement jsonElement = JsonParser.parseString(response.body());
-        assertTrue(jsonElement.isJsonArray(),"Ответ от сервера не соответствует ожидаемому");
-        JsonArray jsonArray = jsonElement.getAsJsonArray();
-        List<Task> tasks = gson.fromJson(jsonArray, new TaskListTypeToken().getType());
-
-        assertNotNull(tasks, "Метод не вернул подзадачи");
-        assertEquals(1, tasks.size(), "Некорректное количество задач");
-        assertEquals("Подзадача", tasks.get(0).getName(), "Некорректное имя подзадачи");
+    private void postTaskHandle(HttpExchange exchange, Gson gson) throws IOException {
+        try {
+            InputStream bodyInputStream = exchange.getRequestBody();
+            String body = new String(bodyInputStream.readAllBytes(), StandardCharsets.UTF_8);
+            Subtask taskDeserialized = gson.fromJson(body, Subtask.class);
+            if (taskDeserialized == null) {
+                sendText(exchange, "НПроизошла ошибка при обработке запроса, тело запроса не преобразовано в подзадачу", 500);
+                return;
+            }
+            if (taskDeserialized.getId() == null || taskDeserialized.getId() == 0) {
+                int id = taskManager.addNewSubtask(taskDeserialized);
+                if (id == 0) {
+                    sendText(exchange, "Произошла ошибка при создании задачи", 500);
+                } else {
+                    sendText(exchange, "Запрос выполнен успешно", 201);
+                }
+            } else {
+                if (taskManager.getSubtaskById(taskDeserialized.getId()) == null) {
+                    sendText(exchange, "Не найдена задача с идентификатором " + taskDeserialized.getId(), 404);
+                } else {
+                    taskManager.updateSubtask(taskDeserialized);
+                    sendText(exchange, "Запрос выполнен успешно", 201);
+                }
+            }
+        } catch (Exception exp) {
+            sendText(exchange, "Произошла ошибка при обработке запроса" + exp.getMessage(), 500);
+        }
     }
 
-    @Test
-    public void testGetTaskById() throws IOException, InterruptedException {
-        final int epicId = manager.addNewEpic(epic);
-        subtask = new Subtask("Подзадача", "Подзадача", epic.getId(), Duration.ofMinutes(5),
-                LocalDateTime.now());
-        final int taskId = manager.addNewSubtask(subtask);
-
-        HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8081/subtasks/" + taskId);
-        HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
-
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        assertEquals(200, response.statusCode());
-
-        JsonElement jsonElement = JsonParser.parseString(response.body());
-        assertTrue(jsonElement.isJsonObject(),"Ответ от сервера не соответствует ожидаемому");
-        JsonObject jsonObject = jsonElement.getAsJsonObject();
-        Task responseTask = gson.fromJson(jsonObject, Subtask.class);
-
-        assertNotNull(responseTask, "Метод не возвращает подзадачи");
-        assertEquals("Подзадача", responseTask.getName(), "Некорректное имя подзадачи");
-    }
-
-    @Test
-    public void deleteTaskById() throws IOException, InterruptedException {
-        final int epicId = manager.addNewEpic(epic);
-        subtask = new Subtask("Подзадача", "Подзадача", epic.getId(), Duration.ofMinutes(5),
-                LocalDateTime.now());
-        final int taskId = manager.addNewSubtask(subtask);
-
-        HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8081/subtasks/" + taskId);
-        HttpRequest request = HttpRequest.newBuilder().uri(url).DELETE().build();
-
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        assertEquals(200, response.statusCode());
-
-        assertEquals(0, manager.getListOfSubtasks().size(), "Задача не удалена");
+    private void deleteTaskHandle(HttpExchange exchange, String[] pathParts) throws IOException {
+        try {
+            int id = Integer.parseInt(pathParts[2]);
+            Subtask task = taskManager.getSubtaskById(id);
+            taskManager.removeSubtaskById(task.getId());
+            sendText(exchange, "Подзадача успешно удалена", 200);
+        } catch (Exception e) {
+            sendText(exchange, "Подзадача с идентификатором " + pathParts[2] + " не найдена", 404);
+        }
     }
 }
