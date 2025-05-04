@@ -1,103 +1,104 @@
 package server;
 
-import com.google.gson.Gson;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
+import com.google.gson.*;
+import service.InMemoryTaskManager;
 import service.TaskManager;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import model.Task;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
-public class TaskHandler extends BaseHttpHandler implements HttpHandler {
-    private final TaskManager taskManager;
-    private final Gson gson;
+public class TaskHandlerTest {
+    private TaskManager manager;
+    private HttpTaskServer server;
+    private Task task;
+    private Gson gson = HttpTaskServer.getGson();
 
-    TaskHandler(TaskManager taskManager, Gson gson) {
-        this.taskManager = taskManager;
-        this.gson = gson;
+    @BeforeEach
+    public void setUP() throws IOException {
+        manager = new InMemoryTaskManager();
+        server = new HttpTaskServer(manager);
+        server.start();
+        task = new Task("Задача", "Задача", Duration.ofMinutes(5), LocalDateTime.now());
     }
 
-    @Override
-    public void handle(HttpExchange exchange) throws IOException {
-
-        String requestMethod = exchange.getRequestMethod();
-        String requestPath = exchange.getRequestURI().getPath();
-        String[] pathParts = requestPath.split("/");
-        if (requestMethod.equals("GET") && pathParts.length == 2 && pathParts[1].equals("tasks")) {
-            getTasksHandle(exchange, gson);
-        } else if (requestMethod.equals("GET") && pathParts.length == 3 && pathParts[1].equals("tasks")) {
-            getTaskHandle(exchange, gson, pathParts);
-        } else if (requestMethod.equals("POST") && pathParts.length == 2 && pathParts[1].equals("tasks")) {
-            postTaskHandle(exchange, gson);
-        } else if (requestMethod.equals("DELETE") && pathParts.length == 3 && pathParts[1].equals("tasks")) {
-            deleteTaskHandle(exchange, pathParts);
-        } else {
-            sendText(exchange, "Метод не найден", 404);
-        }
+    @AfterEach
+    public void close() throws IOException {
+        server.stop();
     }
 
-    private void getTasksHandle(HttpExchange exchange, Gson gson) throws IOException {
-        try {
-            List<Task> tasks = taskManager.getListOfTasks();
-            String text = gson.toJson(tasks);
-            sendText(exchange, text, 200);
-        } catch (Exception exp) {
-            sendText(exchange, "Произошла ошибка при обработке запроса " + exp.getMessage(), 500);
-        }
+    @Test
+    // НОВОЕ!!!
+    public void testGetTasks() throws IOException, InterruptedException {
+        Task task = new Task("Задача", "Задача", Duration.ofMinutes(5), LocalDateTime.now());
+        manager.addNewTask(task);
+
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8081/tasks");
+        HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, response.statusCode());
+
+        JsonElement jsonElement = JsonParser.parseString(response.body());
+        assertTrue(jsonElement.isJsonArray(),"Ответ от сервера не соответствует ожидаемому");
+        JsonArray jsonArray = jsonElement.getAsJsonArray();
+        List<Task> tasks = gson.fromJson(jsonArray, new TaskListTypeToken().getType());
+
+        assertNotNull(tasks, "Метод не вернул задачи");
+        assertEquals(1, tasks.size(), "Некорректное количество задач");
+        assertEquals("Задача", tasks.get(0).getName(), "Некорректное имя задачи");
     }
 
-    private void getTaskHandle(HttpExchange exchange, Gson gson, String[] pathParts) throws IOException {
-        try {
-            int id = Integer.parseInt(pathParts[2]);
-            Task task = taskManager.getTaskById(id);
-            sendText(exchange, gson.toJson(task), 200);
-        } catch (Exception e) {
-            sendText(exchange, "Задача с идентификатором " + pathParts[2] + " не найдена", 404);
-        }
+    @Test
+    public void testGetTaskById() throws IOException, InterruptedException {
+
+        Task task = new Task("Задача", "Задача", Duration.ofMinutes(5), LocalDateTime.now());
+
+        final int taskId = manager.addNewTask(task);
+
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8081/tasks/" + taskId);
+        HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, response.statusCode());
+
+        JsonElement jsonElement = JsonParser.parseString(response.body());
+        assertTrue(jsonElement.isJsonObject(),"Ответ от сервера не соответствует ожидаемому");
+        JsonObject jsonObject = jsonElement.getAsJsonObject();
+        Task responseTask = gson.fromJson(jsonObject, Task.class);
+
+        assertNotNull(responseTask, "Метод не вернул задачи");
+        assertEquals("Задача", responseTask.getName(), "Некорректное имя задачи");
     }
 
-    private void postTaskHandle(HttpExchange exchange, Gson gson) throws IOException {
-        try {
-            InputStream bodyInputStream = exchange.getRequestBody();
-            String body = new String(bodyInputStream.readAllBytes(), StandardCharsets.UTF_8);
-            Task taskDeserialized = gson.fromJson(body, Task.class);
-            if (taskDeserialized == null) {
-                sendText(exchange, "Произошла ошибка при обработке запроса, тело запроса не преобразовано в задачу", 500);
-                return;
-            }
-            if (!taskManager.isTaskNotCrossed(taskDeserialized)) {
-                sendText(exchange, "Добавляемая задача пересекается с существующими", 406);
-                return;
-            }
-            if (taskDeserialized.getId() == null || taskDeserialized.getId() == 0) {
-                taskManager.addNewTask(taskDeserialized);
-                sendText(exchange, "Запрос выполнен успешно", 201);
-            } else {
-                if (taskManager.getTaskById(taskDeserialized.getId()) == null) {
-                    sendText(exchange, "Не найдена задача с идентификатором " + taskDeserialized.getId(), 404);
-                } else {
-                    taskManager.updateTask(taskDeserialized);
-                    sendText(exchange, "Запрос выполнен успешно", 201);
-                }
-            }
-        } catch (Exception exp) {
-            sendText(exchange, "Произошла ошибка при обработке запроса" + exp.getMessage(), 500);
-        }
-    }
+    @Test
+    public void deleteTaskById() throws IOException, InterruptedException {
 
-    private void deleteTaskHandle(HttpExchange exchange, String[] pathParts) throws IOException {
-        try {
-            int id = Integer.parseInt(pathParts[2]);
-            Task task = taskManager.getTaskById(id);
-            taskManager.removeTaskById(task.getId());
-            sendText(exchange, "Задача успешно удалена", 200);
-        } catch (Exception e) {
-            sendText(exchange, "Задача с идентификатором " + pathParts[2] + " не найдена", 404);
-        }
+        Task task = new Task("Задача", "Задача", Duration.ofMinutes(5), LocalDateTime.now());
+
+        final int taskId = manager.addNewTask(task);
+
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8081/tasks/" + taskId);
+        HttpRequest request = HttpRequest.newBuilder().uri(url).DELETE().build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, response.statusCode());
+
+        assertEquals(0, manager.getListOfTasks().size(), "Задача не удалена");
     }
 }
-
