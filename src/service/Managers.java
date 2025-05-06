@@ -21,7 +21,7 @@ public class Managers {
         return new InMemoryHistoryManager();
     }
 
-    public static Gson getGson () {
+    public static Gson getGson() {
         return new GsonBuilder()
                 .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
                 .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
