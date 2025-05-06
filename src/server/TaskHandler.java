@@ -2,7 +2,6 @@ package server;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -11,14 +10,10 @@ import service.TaskManager;
 import model.Task;
 
 
+public class TaskHandler extends BaseHttpHandler {
 
-public class TaskHandler extends BaseHttpHandler implements HttpHandler {
-    private final TaskManager taskManager;
-    private final Gson gson;
-
-    TaskHandler(TaskManager taskManager, Gson gson) {
-        this.taskManager = taskManager;
-        this.gson = gson;
+    public TaskHandler(TaskManager taskManager) {
+        super(taskManager);
     }
 
     @Override
@@ -66,31 +61,23 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
             String body = new String(bodyInputStream.readAllBytes(), StandardCharsets.UTF_8);
             Task taskDeserialized = gson.fromJson(body, Task.class);
             if (taskDeserialized == null) {
-                sendText(exchange, "Произошла ошибка при обработке запроса, тело запроса не преобразовано в задачу", 500);
-                return;
-            }
-            if (taskDeserialized.getId() == null || taskDeserialized.getId() == 0) {
-                taskManager.addNewTask(taskDeserialized);
-                sendText(exchange, "Запрос выполнен успешно", 201);
+                sendText(exchange, "Не удалось преобразовать тело запроса в задачу!", 404);
+            } else if (taskDeserialized.getId() != null) {
+                taskManager.updateTask(taskDeserialized);
+                sendText(exchange, "Запрос выполнен успешно: задача обновлена", 201);
             } else {
-                if (taskManager.getTaskById(taskDeserialized.getId()) == null) {
-                    sendText(exchange, "Не найдена задача с идентификатором " + taskDeserialized.getId(), 404);
-                } else {
-                    taskManager.updateTask(taskDeserialized);
-                    sendText(exchange, "Запрос выполнен успешно", 201);
-                }
+                taskManager.addNewTask(taskDeserialized);
+                sendText(exchange, "Запрос выполнен успешно: задача добавлена", 201);
             }
         } catch (Exception exp) {
-            sendText(exchange, "Произошла ошибка при обработке запроса" + exp.getMessage(), 500);
+            sendText(exchange, "При выполнении запроса возникла ошибка " + exp.getMessage(), 404);
         }
     }
 
     private void deleteTaskHandle(HttpExchange exchange, String[] pathParts) throws IOException {
         try {
-            int id = Integer.parseInt(pathParts[2]);
-            Task task = taskManager.getTaskById(id);
-            taskManager.removeTaskById(task.getId());
-            sendText(exchange, "Задача успешно удалена", 200);
+            taskManager.removeTaskById(Integer.parseInt(pathParts[2]));
+            sendText(exchange, "Задпрос выполнен успешно: задача удалена", 200);
         } catch (Exception e) {
             sendText(exchange, "Задача с идентификатором " + pathParts[2] + " не найдена", 404);
         }

@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import model.Epic;
 import model.Subtask;
 import model.Task;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -49,7 +48,7 @@ public class PrioritizedHandlerTest {
     }
 
     @Test
-    public void prioritizedGET() throws IOException, InterruptedException {
+    public void getPrioritized() throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8081/prioritized");
         HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();

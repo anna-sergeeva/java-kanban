@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import service.InMemoryTaskManager;
 import service.TaskManager;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -40,7 +39,7 @@ public class EpicHandlerTest {
     }
 
     @Test
-    public void testAddEpic() throws IOException, InterruptedException {
+    public void addEpicTest() throws IOException, InterruptedException {
         Epic epic = new Epic("Эпик", "Эпик");
         String taskJson = gson.toJson(epic);
 
@@ -59,7 +58,7 @@ public class EpicHandlerTest {
     }
 
     @Test
-    public void testGetEpics() throws IOException, InterruptedException {
+    public void getEpicsTest() throws IOException, InterruptedException {
         Epic epic = new Epic("Эпик", "Эпик");
         manager.addNewEpic(epic);
 
@@ -82,7 +81,7 @@ public class EpicHandlerTest {
     }
 
     @Test
-    public void testGetEpicById() throws IOException, InterruptedException {
+    public void getEpicByIdTest() throws IOException, InterruptedException {
 
         Epic epic = new Epic("Эпик", "Testing task 2");
         final int epicId = manager.addNewEpic(epic);
@@ -104,7 +103,7 @@ public class EpicHandlerTest {
     }
 
     @Test
-    public void deleteEpicById() throws IOException, InterruptedException {
+    public void deleteEpicByIdTest() throws IOException, InterruptedException {
 
         Epic epic = new Epic("Эпик", "Эпик");
         final int epicId = manager.addNewEpic(epic);
@@ -117,5 +116,4 @@ public class EpicHandlerTest {
         assertEquals(200, response.statusCode());
         assertEquals(0, manager.getListOfEpics().size(), "Эпик не удален");
     }
-
 }

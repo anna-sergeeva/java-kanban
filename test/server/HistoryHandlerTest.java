@@ -8,7 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import model.Epic;
 import model.Task;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -45,7 +44,7 @@ public class HistoryHandlerTest {
     }
 
     @Test
-    public void historyGET() throws IOException, InterruptedException {
+    public void getHistory() throws IOException, InterruptedException {
         manager.getEpicById(epic.getId());
         manager.getTaskById(task.getId());
         HttpClient client = HttpClient.newHttpClient();

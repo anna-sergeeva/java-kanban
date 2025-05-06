@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import service.InMemoryTaskManager;
 import service.TaskManager;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -45,7 +44,7 @@ public class SubtaskHandlerTest {
     }
 
     @Test
-    public void testAddSubtask() throws IOException, InterruptedException {
+    public void addSubtaskTest() throws IOException, InterruptedException {
         final int epicId = manager.addNewEpic(epic);
         subtask = new Subtask("Подзадача", "Подзадача", epic.getId(), Duration.ofMinutes(5),
                 LocalDateTime.now());
@@ -66,7 +65,7 @@ public class SubtaskHandlerTest {
     }
 
     @Test
-    public void testGetTasks() throws IOException, InterruptedException {
+    public void getTasksTest() throws IOException, InterruptedException {
         final int epicId = manager.addNewEpic(epic);
         subtask = new Subtask("Подзадача", "Подзадача", epic.getId(), Duration.ofMinutes(5),
                 LocalDateTime.now());
@@ -90,7 +89,7 @@ public class SubtaskHandlerTest {
     }
 
     @Test
-    public void testGetTaskById() throws IOException, InterruptedException {
+    public void getTaskByIdTest() throws IOException, InterruptedException {
         final int epicId = manager.addNewEpic(epic);
         subtask = new Subtask("Подзадача", "Подзадача", epic.getId(), Duration.ofMinutes(5),
                 LocalDateTime.now());
@@ -113,7 +112,7 @@ public class SubtaskHandlerTest {
     }
 
     @Test
-    public void deleteTaskById() throws IOException, InterruptedException {
+    public void deleteTaskByIdTest() throws IOException, InterruptedException {
         final int epicId = manager.addNewEpic(epic);
         subtask = new Subtask("Подзадача", "Подзадача", epic.getId(), Duration.ofMinutes(5),
                 LocalDateTime.now());

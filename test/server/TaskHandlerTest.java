@@ -7,7 +7,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import model.Task;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -40,8 +39,7 @@ public class TaskHandlerTest {
     }
 
     @Test
-    // НОВОЕ!!!
-    public void testGetTasks() throws IOException, InterruptedException {
+    public void getTasksTest() throws IOException, InterruptedException {
         Task task = new Task("Задача", "Задача", Duration.ofMinutes(5), LocalDateTime.now());
         manager.addNewTask(task);
 
@@ -63,7 +61,7 @@ public class TaskHandlerTest {
     }
 
     @Test
-    public void testGetTaskById() throws IOException, InterruptedException {
+    public void getTaskByIdTest() throws IOException, InterruptedException {
 
         Task task = new Task("Задача", "Задача", Duration.ofMinutes(5), LocalDateTime.now());
 
@@ -86,7 +84,7 @@ public class TaskHandlerTest {
     }
 
     @Test
-    public void deleteTaskById() throws IOException, InterruptedException {
+    public void deleteTaskByIdTest() throws IOException, InterruptedException {
 
         Task task = new Task("Задача", "Задача", Duration.ofMinutes(5), LocalDateTime.now());
 
