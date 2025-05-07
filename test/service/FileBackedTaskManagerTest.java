@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 
-class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
+class FileBackedTaskManagerTest extends test.service.TaskManagerTest<FileBackedTaskManager> {
 
     File file;
 

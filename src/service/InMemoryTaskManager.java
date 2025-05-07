@@ -20,7 +20,7 @@ public class InMemoryTaskManager implements TaskManager {
 
 
     @Override
-    public List<Task> getHistory() {
+    public ArrayList<Task> getHistory() {
         return historyManager.getHistory();
     }
 
@@ -31,7 +31,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public int addNewTask(Task task) {
-        if (!isTaskNotCrossed(task)) {
+        if (isTaskNotCrossed(task)) {
             return -1;
         }
         final int id = idCounter();
@@ -51,7 +51,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public int addNewSubtask(Subtask subtask) {
-        if (!isTaskNotCrossed(subtask)) {
+        if (isTaskNotCrossed(subtask)) {
             return -1;
         }
         Epic epic = epics.get(subtask.getEpicId());
@@ -76,7 +76,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (updTask == null) {
             return;
         }
-        if (!isTaskNotCrossed(task)) {
+        if (isTaskNotCrossed(task)) {
             return;
         }
         updTask.setName(task.getName());
@@ -108,7 +108,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (updSubtask == null) {
             return;
         }
-        if (!isTaskNotCrossed(subtask)) {
+        if (isTaskNotCrossed(subtask)) {
             return;
         }
         updSubtask.setName(subtask.getName());
@@ -137,6 +137,17 @@ public class InMemoryTaskManager implements TaskManager {
         return new ArrayList<>(subtasks.values());
     }
 
+    public ArrayList<Subtask> getSubtasksOfEpic(Epic epic) {
+        ArrayList<Subtask> allSubtaskForEpicIdList = new ArrayList<>();
+        if (epic == null) {
+            return new ArrayList<Subtask>();
+        }
+        for (Integer subtaskId : epic.getSubtaskId()) {
+            allSubtaskForEpicIdList.add(subtasks.get(subtaskId));
+        }
+        return allSubtaskForEpicIdList;
+    }
+
     @Override
     public ArrayList<Subtask> getListOfSubtasksOfEpic(int id) {
         ArrayList<Subtask> allSubtaskForEpicIdList = new ArrayList<>();
@@ -149,7 +160,6 @@ public class InMemoryTaskManager implements TaskManager {
         }
         return allSubtaskForEpicIdList;
     }
-
 
     @Override
     public Task getTaskById(int id) {
@@ -313,14 +323,14 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    private boolean isTaskNotCrossed(Task task) {
+    public boolean isTaskNotCrossed(Task task) {
         if (getPrioritizedTasks().isEmpty()) {
-            return true;
+            return false;
         }
         return getPrioritizedTasks().stream()
                 .filter(newTask -> task.getStartTime().isBefore(newTask.getEndTime()) &&
                         task.getEndTime().isAfter(newTask.getStartTime()))
                 .findAny()
-                .isEmpty();
+                .isPresent();
     }
 }

@@ -8,7 +8,7 @@ import service.InMemoryTaskManager;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
+public class InMemoryTaskManagerTest extends test.service.TaskManagerTest<InMemoryTaskManager> {
 
     @BeforeEach
     public void initInMemoryManager() {
